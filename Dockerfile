@@ -21,7 +21,7 @@ FROM nginx:stable-alpine as production-stage
 COPY --from=build-stage /app/public /usr/share/nginx/html
 
 # Expose port 80 to the outside once the container has launched
-EXPOSE 80
+EXPOSE 8080
 
 # Define the command to run your app using CMD which defines your runtime
 CMD ["nginx", "-g", "daemon off;"]
