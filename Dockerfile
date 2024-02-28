@@ -1,27 +1,21 @@
-# Use an official Node.js runtime as a parent image
-FROM node:14-alpine as build-stage
+FROM node:16-alpine
 
-# Set the working directory in the container
-WORKDIR /app
+WORKDIR /usr/src/app
 
-# Copy the package.json files and install dependencies
+COPY rollup.config.js ./
 COPY package*.json ./
+
 RUN npm install
 
-# Copy the rest of your app's source code
-COPY . .
+COPY ./src ./src
+COPY ./public ./public
 
-# Build your Svelte app
-RUN npm run build
+RUN npm run-script build
 
-# Use Nginx to serve the app
-FROM nginx:stable-alpine as production-stage
+EXPOSE 3000
 
-# Copy the build output to replace the default nginx contents
-COPY --from=build-stage /app/public /usr/share/nginx/html
+ENV PORT 3000
+ENV HOST=0.0.0.0
 
-# Expose port 80 to the outside once the container has launched
-EXPOSE 8080
 
-# Define the command to run your app using CMD which defines your runtime
-CMD ["nginx", "-g", "daemon off;"]
+CMD [ "npm", "start" ]
